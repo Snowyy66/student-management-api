@@ -5,11 +5,19 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Table(name = "students")
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Student {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     private Long id;
 

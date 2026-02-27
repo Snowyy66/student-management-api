@@ -4,7 +4,6 @@ import com.example.studentapi.model.Student;
 import com.example.studentapi.service.StudentService;
 
 import jakarta.validation.Valid;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,8 +37,7 @@ public class StudentController {
     // READ BY ID
     @GetMapping("/{id}")
     public ResponseEntity<Student> getStudentById(@PathVariable Long id) {
-        Student student = studentService.getStudentById(id);
-        return ResponseEntity.ok(student);
+        return ResponseEntity.ok(studentService.getStudentById(id));
     }
 
     // UPDATE
@@ -48,8 +46,7 @@ public class StudentController {
             @PathVariable Long id,
             @Valid @RequestBody Student student) {
 
-        Student updatedStudent = studentService.updateStudent(id, student);
-        return ResponseEntity.ok(updatedStudent);
+        return ResponseEntity.ok(studentService.updateStudent(id, student));
     }
 
     // DELETE

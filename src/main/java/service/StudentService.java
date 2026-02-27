@@ -1,41 +1,35 @@
 package com.example.studentapi.service;
 
-import com.example.studentapi.model.Student;
 import com.example.studentapi.exception.StudentNotFoundException;
+import com.example.studentapi.model.Student;
+import com.example.studentapi.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class StudentService {
 
-    private final List<Student> studentList;
-    private final AtomicLong idGenerator;
+    private final StudentRepository studentRepository;
 
-    public StudentService() {
-        this.studentList = new ArrayList<>();
-        this.idGenerator = new AtomicLong(1);
+    // Constructor Injection (Professional Way)
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
     }
 
     // CREATE
     public Student addStudent(Student student) {
-        student.setId(idGenerator.getAndIncrement());
-        studentList.add(student);
-        return student;
+        return studentRepository.save(student);
     }
 
     // READ ALL
     public List<Student> getAllStudents() {
-        return studentList;
+        return studentRepository.findAll();
     }
 
     // READ BY ID
     public Student getStudentById(Long id) {
-        return studentList.stream()
-                .filter(student -> student.getId().equals(id))
-                .findFirst()
+        return studentRepository.findById(id)
                 .orElseThrow(() ->
                         new StudentNotFoundException("Student not found with id: " + id)
                 );
@@ -45,20 +39,20 @@ public class StudentService {
     public Student updateStudent(Long id, Student updatedStudent) {
 
         Student existingStudent = getStudentById(id);
-        // If not found → exception thrown automatically
 
         existingStudent.setName(updatedStudent.getName());
         existingStudent.setEmail(updatedStudent.getEmail());
 
-        return existingStudent;
+        return studentRepository.save(existingStudent);
     }
 
     // DELETE
     public void deleteStudent(Long id) {
 
-        Student existingStudent = getStudentById(id);
-        // If not found → exception thrown automatically
+        if (!studentRepository.existsById(id)) {
+            throw new StudentNotFoundException("Student not found with id: " + id);
+        }
 
-        studentList.remove(existingStudent);
+        studentRepository.deleteById(id);
     }
 }
