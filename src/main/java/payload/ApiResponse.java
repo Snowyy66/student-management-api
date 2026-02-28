@@ -1,13 +1,13 @@
-package com.example.studentapi.exception;
+package com.example.studentapi.payload;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ErrorResponse {
+public class ApiResponse<T> {
 
     private boolean success;
     private String message;
-    private int status;
+    private T data;
 }

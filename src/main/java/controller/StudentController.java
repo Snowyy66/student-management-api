@@ -1,6 +1,7 @@
 package com.example.studentapi.controller;
 
 import com.example.studentapi.model.Student;
+import com.example.studentapi.payload.ApiResponse;
 import com.example.studentapi.service.StudentService;
 
 import jakarta.validation.Valid;
@@ -16,43 +17,67 @@ public class StudentController {
 
     private final StudentService studentService;
 
-    // Constructor Injection (Professional way)
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
 
     // CREATE
     @PostMapping
-    public ResponseEntity<Student> createStudent(@Valid @RequestBody Student student) {
+    public ResponseEntity<ApiResponse<Student>> createStudent(
+            @Valid @RequestBody Student student) {
+
         Student createdStudent = studentService.addStudent(student);
-        return new ResponseEntity<>(createdStudent, HttpStatus.CREATED);
+
+        ApiResponse<Student> response =
+                new ApiResponse<>(true, "Student created successfully", createdStudent);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     // READ ALL
     @GetMapping
-    public ResponseEntity<List<Student>> getAllStudents() {
-        return ResponseEntity.ok(studentService.getAllStudents());
+    public ResponseEntity<ApiResponse<List<Student>>> getAllStudents() {
+
+        List<Student> students = studentService.getAllStudents();
+
+        ApiResponse<List<Student>> response =
+                new ApiResponse<>(true, "Students fetched successfully", students);
+
+        return ResponseEntity.ok(response);
     }
 
     // READ BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<Student> getStudentById(@PathVariable Long id) {
-        return ResponseEntity.ok(studentService.getStudentById(id));
+    public ResponseEntity<ApiResponse<Student>> getStudentById(@PathVariable Long id) {
+
+        Student student = studentService.getStudentById(id);
+
+        ApiResponse<Student> response =
+                new ApiResponse<>(true, "Student fetched successfully", student);
+
+        return ResponseEntity.ok(response);
     }
 
     // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<Student> updateStudent(
+    public ResponseEntity<ApiResponse<Student>> updateStudent(
             @PathVariable Long id,
             @Valid @RequestBody Student student) {
 
-        return ResponseEntity.ok(studentService.updateStudent(id, student));
+        Student updated = studentService.updateStudent(id, student);
+
+        ApiResponse<Student> response =
+                new ApiResponse<>(true, "Student updated successfully", updated);
+
+        return ResponseEntity.ok(response);
     }
 
     // DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteStudent(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
+
         studentService.deleteStudent(id);
-        return ResponseEntity.ok("Student deleted successfully");
+
+        return ResponseEntity.noContent().build();  // 204 NO CONTENT
     }
 }
